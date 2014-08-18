@@ -55,6 +55,9 @@ static void usage(FILE *out)
 	fputs(" -t, --tag <tag>       mark every line with this tag\n", out);
 
 	fputs("\nOptions:\n", out);
+	fputs(" -s, --size <integer>  maximum size of log entry\n", out);
+
+	fputs("\n", out);
 	fputs(" -h, --help     display this help and exit\n", out);
 	fputs(" -V, --version  output version information and exit\n", out);
 }
@@ -64,18 +67,25 @@ int main(int argc, char **argv)
 	int ch;
 	char *tag = NULL;
 	char *msg;
-	char buf[8096];
+	int size = 8096;
 
 	static const struct option longopts[] = {
 		{ "tag",	required_argument,  0, 't' },
+		{ "size",	required_argument,  0, 's' },
 		{ "version",	no_argument,	    0, 'V' },
 		{ "help",	no_argument,	    0, 'h' },
 		{ NULL,		0, 0, 0 }
 	};
 
-	while ((ch = getopt_long(argc, argv, "f:i::p:st:u:dTn:P:Vh",
-					    longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "s:t:Vh", longopts, NULL)) != -1) {
 		switch (ch) {
+			case 's':
+				if (sscanf(optarg, "%d", &size) != 1) {
+					fputs("Invalid maximum entry size specified.\n", stderr);
+					usage(stderr);
+					exit(EXIT_FAILURE);
+				}
+				break;
 			case 't':
 				tag = optarg;
 				break;
@@ -96,6 +106,8 @@ int main(int argc, char **argv)
 		usage(stderr);
 		exit(EXIT_FAILURE);
 	}
+
+	char buf[size];
 
 	openlog(tag, 0, 0);
 
