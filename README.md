@@ -10,6 +10,12 @@ Applications shouldn't be concerned with how or where log files are transmitted/
 
 To build `longlogger`, simply execute `make`.
 
+## Installation
+
+Simply build and install using make (sudo may be required for install):
+
+    make && make install
+
 ## License
 
 This software is based on the source code from `logger` utility in the `util-linux` package. The license found in longlogger.c has been reproduced from the original logger.c license.
